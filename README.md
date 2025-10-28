@@ -50,21 +50,11 @@
 
   ![Profile Summary](https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=yellow-seed&theme=radical)
   
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=yellow-seed&theme=radical" width="400">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=yellow-seed&theme=radical" width="400">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=yellow-seed&theme=radical" alt="Programming languages distribution" width="400">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=yellow-seed&theme=radical" alt="Most used programming languages" width="400">
   
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=yellow-seed&theme=radical" width="400">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=yellow-seed&theme=radical" width="400">
-
-</div>
-
----
-
-## 🌟 Featured Repositories
-
-<div align="center">
-
-  [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=yellow-seed&repo=yellow-seed&theme=radical&hide_border=true)](https://github.com/yellow-seed/yellow-seed)
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=yellow-seed&theme=radical" alt="GitHub statistics summary" width="400">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=yellow-seed&theme=radical" alt="Most productive coding hours" width="400">
 
 </div>
 
