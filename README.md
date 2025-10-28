@@ -54,7 +54,7 @@
   <img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=yellow-seed&theme=radical" alt="Most used programming languages" width="400">
   
   <img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=yellow-seed&theme=radical" alt="GitHub statistics summary" width="400">
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=yellow-seed&theme=radical" alt="Most productive coding hours" width="400">
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=yellow-seed&theme=radical" alt="Most productive coding time" width="400">
 
 </div>
 
