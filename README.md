@@ -34,11 +34,11 @@
 
 ---
 
-## 🏆 GitHub Trophies
+## 🏆 GitHub Achievements
 
 <div align="center">
 
-  ![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=yellow-seed&theme=radical&no-frame=true&row=1&column=6)
+  ![trophy](https://github-profile-trophy.vercel.app/?username=yellow-seed&theme=radical&margin-w=15&margin-h=15)
 
 </div>
 
