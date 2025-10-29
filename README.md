@@ -38,7 +38,7 @@
 
 <div align="center">
 
-  ![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=yellow-seed&theme=radical&no-frame=true&no-bg=true&row=1&column=7)
+  ![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=yellow-seed&theme=radical&no-frame=true&row=1&column=6)
 
 </div>
 
