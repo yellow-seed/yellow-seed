@@ -1,0 +1,8 @@
+{
+  "name": "yellow-seed",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"README.md\" \"AGENTS.md\" \"CLAUDE.md\" \"docs/**/*.md\" \".github/**/*.md\" \"compose.yml\" \"codecov.yml\" \".github/**/*.{yml,yaml}\" \".github/**/*.json\""
+  }
+}

@@ -1,0 +1,8 @@
+node_modules
+coverage
+build
+dist
+# Skills are AI agent prompts; keep formatting as-authored.
+.github/skills
+# Symlink to AGENTS.md; prettier reports explicit symlink paths as errors.
+.github/copilot-instructions.md

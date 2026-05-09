@@ -1,0 +1,85 @@
+name: Setup Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry-run mode (no actual changes will be made)"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check user permission
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const { data: repo } = await github.rest.repos.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.actor
+            });
+
+            console.log(`User: ${context.actor}`);
+            console.log(`Permission: ${permission.permission}`);
+            console.log(`Repository owner: ${repo.owner.login}`);
+
+            // Check if user is repository owner or has admin permission
+            if (context.actor !== repo.owner.login && permission.permission !== 'admin') {
+              core.setFailed(`Access denied. Only repository owner (${repo.owner.login}) can run this workflow.`);
+              return;
+            }
+
+            console.log('✓ Permission check passed');
+
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup GitHub CLI
+        run: |
+          # GitHub CLI is pre-installed on ubuntu-24.04 runners
+          gh --version
+
+      - name: Run setup script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: |
+          echo "Starting repository setup..."
+          echo "DRY_RUN: ${DRY_RUN}"
+
+          if [ "${DRY_RUN}" = "1" ]; then
+            echo "⚠️  Running in DRY-RUN mode - no actual changes will be made"
+          else
+            echo "⚠️  Running in LIVE mode - changes will be applied"
+          fi
+
+          bash .github/scripts/setup-all.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            {
+              echo "### Setup completed (DRY-RUN mode) ✓"
+              echo ""
+              echo "No actual changes were made. Review the logs to see what would be changed."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "### Setup completed ✓"
+              echo ""
+              echo "All repository settings have been configured."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
