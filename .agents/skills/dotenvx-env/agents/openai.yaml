@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dotenvx Env"
+  short_description: "dotenvxで環境別secretを安全に運用"
+  default_prompt: "Use $dotenvx-env to add or rotate an environment variable with dotenvx."

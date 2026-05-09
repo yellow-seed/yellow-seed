@@ -1,0 +1,36 @@
+# NOTE:
+# CI and helper script `scripts/run-checks.sh` run `qlty check --all`.
+# Keep this plugin list as the single source of truth for checks,
+# including shfmt/actionlint for shell formatting and GitHub Actions linting.
+
+config_version = "0"
+
+[[source]]
+name = "default"
+default = true
+
+[[plugin]]
+name = "shellcheck"
+version = "0.10.0"
+
+[[plugin]]
+name = "shfmt"
+version = "3.8.0"
+
+[[plugin]]
+name = "actionlint"
+
+[[plugin]]
+name = "prettier"
+version = "3.6.2"
+
+[[exclude]]
+plugins = ["prettier"]
+file_patterns = [
+  ".github/copilot-instructions.md",
+  ".github/skills/**",
+  ".claude/skills/**",
+  ".codex/skills/**",
+  ".agents/skills/**",
+  "openspec/**",
+]

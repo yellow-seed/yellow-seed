@@ -1,0 +1,20 @@
+{
+  "name": "default",
+  "target": "branch",
+  "enforcement": "disabled",
+  "conditions": {
+    "ref_name": {
+      "include": [],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    }
+  ],
+  "bypass_actors": []
+}

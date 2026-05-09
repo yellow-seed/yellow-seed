@@ -1,0 +1,61 @@
+name: rapid
+version: 1
+description: Fast iteration with minimal overhead - proposal → tasks
+
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: Brief proposal focusing on why and references
+    template: proposal.md
+    instruction: |
+      Create a brief proposal for this change.
+
+      Sections:
+      - **なぜやるか**: Why this change is needed. What problem does this solve? Why now?
+        Keep it to 1-3 sentences. Focus on the motivation, not the solution.
+      - **Ref**: Links to related Issues, PRs, documents, or external references.
+        Use markdown links. List one per line.
+
+      Keep it very concise (quarter to half a page). Skip architecture, specs,
+      and implementation details — those belong in tasks.md.
+    requires: []
+
+  - id: tasks
+    generates: tasks.md
+    description: Implementation checklist with trackable tasks
+    template: tasks.md
+    instruction: |
+      Create the task list that breaks down the implementation work.
+
+      **IMPORTANT: Follow the template below exactly.** The apply phase parses
+      checkbox format to track progress. Tasks not using `- [ ]` won't be tracked.
+
+      Guidelines:
+      - Group related tasks under ## numbered headings
+      - Each task MUST be a checkbox: `- [ ] X.Y Task description`
+      - Tasks should be small enough to complete in one session
+      - Order tasks by dependency (what must be done first?)
+
+      Example:
+      ```
+      ## 1. Setup
+
+      - [ ] 1.1 Create new module structure
+
+      ## 2. Implementation
+
+      - [ ] 2.1 Implement the feature
+      - [ ] 2.2 Add tests
+      ```
+
+      Reference proposal.md for context on what to build.
+      Each task should be verifiable — you know when it's done.
+    requires:
+      - proposal
+
+apply:
+  requires: [tasks]
+  tracks: tasks.md
+  instruction: |
+    Read proposal.md for context, work through pending tasks in tasks.md,
+    mark each complete as you go. Pause if you hit blockers or need clarification.
