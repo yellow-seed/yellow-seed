@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      [
+        main,
+        feat/*,
+        fix/*,
+        docs/*,
+        style/*,
+        refactor/*,
+        perf/*,
+        test/*,
+        chore/*,
+        copilot/*,
+        claude/*,
+      ]
+
+jobs:
+  Test:
+    name: bats Test
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      MISE_ENV: ci
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install tools
+        run: |
+          MISE_ENV=ci bash scripts/install-tools.sh bats
+
+      - name: Run repository tests
+        run: bats tests/*.bats
+
+      - name: Run skill-owned tests
+        run: bats .agents/skills/*/references/*.bats

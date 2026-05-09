@@ -1,0 +1,186 @@
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Ruby
+*.gem
+*.rbc
+/.config
+!/.config/wt.toml
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+*.bundle
+*.so
+*.o
+*.a
+mkmf.log
+*.log
+.bundle/
+vendor/bundle
+lib/bundler/man/
+.ruby-version
+.ruby-gemset
+.rvmrc
+.rbenv-version
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.venv
+venv/
+ENV/
+env/
+.env
+.venv
+
+# JavaScript / TypeScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+dist/
+build/
+.next/
+out/
+.nuxt/
+.cache/
+.parcel-cache/
+*.tsbuildinfo
+.next
+out
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+vendor/
+*.mod.sum
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Environment variables
+.env
+.env.keys
+.env.*.keys
+secrets/
+
+# dotenvx encrypted and sample environment files are intentionally allowed.
+!.env.sample
+!.env.local
+!.env.remote
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Build artifacts
+dist/
+build/
+out/
+*.o
+*.a
+*.so
+*.dylib
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Claude Code
+.claude/settings.local.json
+
+# Local binaries
+actionlint
+
+# qlty runtime files
+.qlty/logs
+.qlty/plugin_cachedir
+.qlty/results
+
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl

@@ -1,0 +1,91 @@
+name: OpenSpec Monthly Archive
+
+on:
+  schedule:
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  archive:
+    name: Archive completed changes
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run archive script
+        id: archive
+        run: bash .github/scripts/openspec-archive.sh
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet HEAD; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create branch and commit
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          BRANCH="chore/openspec-archive-$(date +%Y-%m)-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${BRANCH}"
+          git add -A
+          git commit -m "chore: openspec monthly archive $(date +%Y-%m)"
+          git push -u origin "${BRANCH}"
+
+      - name: Ensure openspec-archive label exists
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "openspec-archive" \
+            --color "0075ca" \
+            --description "Automated OpenSpec archive operation" \
+            2>/dev/null || true
+
+      - name: Create pull request
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARCHIVED: ${{ steps.archive.outputs.archived }}
+        run: |
+          MONTH="$(date +%Y-%m)"
+          body_file="$(mktemp)"
+          trap 'rm -f "${body_file}"' EXIT
+          {
+            echo "## Description"
+            echo ""
+            echo "月次 OpenSpec アーカイブ処理を実行しました。"
+            echo ""
+            echo "- アーカイブした change: ${ARCHIVED} 件"
+            echo ""
+            echo "## Type of Change"
+            echo ""
+            echo "- [x] Documentation update"
+            echo ""
+            echo "## Changes Made"
+            echo ""
+            echo "- 完了済み change を \`openspec/changes/archive/\` へ移動"
+            echo ""
+            echo "## Testing"
+            echo ""
+            echo "- [x] 自動化された処理のため手動テスト不要"
+            echo ""
+            echo "## Checklist"
+            echo ""
+            echo "- [x] 自己レビューを実施しました"
+          } >"${body_file}"
+          gh pr create \
+            --title "chore: openspec monthly archive ${MONTH}" \
+            --label "openspec-archive" \
+            --body-file "${body_file}"

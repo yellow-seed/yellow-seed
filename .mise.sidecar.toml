@@ -1,0 +1,8 @@
+[tools]
+bats = "1.11.1"
+dotenvx = "latest"
+"github:qltysh/qlty" = "latest"
+gh = "2.62.0"
+pinact = "3.9.2"
+terraform = "1.11.4"
+"github:max-sixty/worktrunk" = "latest"

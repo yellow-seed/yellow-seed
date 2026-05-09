@@ -1,0 +1,26 @@
+services:
+  tool-sidecar:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]
+    init: true
+    volumes:
+      - .:/workspace
+      - /workspace/secrets
+    working_dir: /workspace
+    environment:
+      - MISE_ENV=sidecar
+      - OPENSPEC_TELEMETRY=0
+
+  terraform:
+    image: hashicorp/terraform:1.9.5@sha256:79336cfbc9113f41806e7b2061b913852f11d6bdbc0e188d184e6bdee40b84a7
+    working_dir: /workspace/.github/terraform/repository-settings
+    volumes:
+      - .:/workspace
+    environment:
+      - TF_VAR_github_owner
+      - TF_VAR_github_token
+      - TF_VAR_repository_name
+    profiles:
+      - terraform

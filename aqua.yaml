@@ -1,0 +1,8 @@
+registries:
+  - type: local
+    name: local
+    path: aqua/registry.yaml
+
+packages:
+  - name: azu/dockerfile-pin@v1.2.2
+    registry: local

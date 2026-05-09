@@ -1,0 +1,87 @@
+name: Sidecar CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches:
+      [
+        main,
+        feat/*,
+        fix/*,
+        docs/*,
+        style/*,
+        refactor/*,
+        perf/*,
+        test/*,
+        chore/*,
+        copilot/*,
+        claude/*,
+      ]
+
+jobs:
+  Quality:
+    name: qlty
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install qlty
+        uses: qltysh/qlty-action/install@a2277a908db90c4c868832fb9204521fb940fdb4 # v1
+
+      - name: Run sidecar quality checks
+        run: scripts/run-checks.sh
+
+  Actionlint:
+    name: actionlint
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run actionlint
+        uses: reviewdog/action-actionlint@50b75b9513baa71e6a1899a1ebaa9ac9851cf16c # v1.66.0
+
+  Pinact:
+    name: pinact
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install pinact
+        uses: suzuki-shunsuke/pinact-action@cf51507d80d4d6522a07348e3d58790290eaf0b6 # v2.0.0
+        with:
+          skip_push: "true"
+          verify: "true"
+
+  DockerfilePin:
+    name: dockerfile-pin
+    runs-on: ubuntu-24.04
+    env:
+      AQUA_POLICY_CONFIG: aqua-policy.yaml
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install dockerfile-pin
+        uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
+        with:
+          aqua_version: v2.57.1
+          policy_allow: "true"
+
+      - name: Check digest pinning
+        run: dockerfile-pin check

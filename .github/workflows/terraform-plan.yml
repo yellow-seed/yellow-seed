@@ -1,0 +1,132 @@
+name: Terraform Plan
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/terraform/**"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  validate:
+    name: terraform validate
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: .github/terraform/repository-settings
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: terraform init
+        run: terraform init -backend=false
+
+      - name: terraform validate
+        run: terraform validate
+
+      - uses: terraform-linters/setup-tflint@90f302c255ef959cbfb4bd10581afecdb7ece3e6 # v4.1.1
+
+      - name: tflint init
+        run: tflint --init
+
+      - name: tflint
+        run: tflint --format compact
+
+  plan:
+    name: terraform plan
+    needs: [validate]
+    runs-on: ubuntu-24.04
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    defaults:
+      run:
+        working-directory: .github/terraform/repository-settings
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+
+      - name: Set repository name
+        run: echo "TF_VAR_repository_name=${GITHUB_REPOSITORY##*/}" >> "$GITHUB_ENV"
+
+      - name: terraform init
+        run: terraform init
+
+      - name: terraform import
+        env:
+          TF_VAR_github_owner: ${{ github.repository_owner }}
+          TF_VAR_github_token: ${{ secrets.GH_TOKEN }}
+        run: terraform import github_repository.template "${TF_VAR_repository_name}"
+
+      - name: terraform plan
+        id: plan
+        env:
+          TF_VAR_github_owner: ${{ github.repository_owner }}
+          TF_VAR_github_token: ${{ secrets.GH_TOKEN }}
+        run: |
+          set +e
+          terraform plan -no-color 2>&1 | tee "$GITHUB_WORKSPACE/plan_output.txt"
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          set -e
+
+      - name: Post plan to PR
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        if: always()
+        env:
+          PLAN_EXIT_CODE: ${{ steps.plan.outputs.exit_code }}
+        with:
+          script: |
+            const fs = require('fs');
+            const planPath = `${process.env.GITHUB_WORKSPACE}/plan_output.txt`;
+            let output = fs.existsSync(planPath)
+              ? fs.readFileSync(planPath, 'utf8')
+              : 'terraform plan did not produce output. Check earlier workflow steps such as init or import.';
+            const MAX = 60000;
+            if (output.length > MAX) output = output.slice(0, MAX) + '\n... (truncated)';
+
+            const status = process.env.PLAN_EXIT_CODE === '0' ? '✅' : '❌';
+            const body = [
+              `### Terraform Plan ${status}`,
+              '',
+              '<details><summary>Plan output</summary>',
+              '',
+              '```',
+              output,
+              '```',
+              '</details>',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.startsWith('### Terraform Plan'));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Fail if plan errored
+        if: steps.plan.outputs.exit_code != '0'
+        run: exit 1

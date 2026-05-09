@@ -1,0 +1,43 @@
+#!/bin/bash
+set -euo pipefail
+
+LOG_PREFIX="[pre-push]"
+
+log() {
+  echo "$LOG_PREFIX $*" >&2
+}
+
+if ! REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null); then
+  log "Not inside a git repository."
+  exit 0
+fi
+
+cd "$REPO_ROOT"
+
+declare -a changed_files=()
+while read -r local_ref local_sha _ remote_sha; do
+  if [ -z "${local_ref:-}" ]; then
+    continue
+  fi
+
+  if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+    continue
+  fi
+
+  base_sha="$remote_sha"
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    base_sha=$(git hash-object -t tree /dev/null)
+  fi
+
+  while IFS= read -r file; do
+    [[ -n "$file" ]] && changed_files+=("$file")
+  done <<< "$(git diff --name-only --diff-filter=ACMR "$base_sha" "$local_sha")"
+done
+
+if [ "${#changed_files[@]}" -eq 0 ]; then
+  log "No changes to check for push."
+  exit 0
+fi
+
+log "Running checks for pushed commits..."
+"$REPO_ROOT/.githooks/run-checks.sh" "${changed_files[@]}"
